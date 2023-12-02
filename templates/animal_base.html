@@ -1,0 +1,45 @@
+{% extends 'index_base.html' %} 
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header ">
+            <h2>{{animal['description']}}<h2>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-3 fw-bold">Nom :</div>
+                <div class="col-md-9">{{animal['nom']}}</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-3 fw-bold">Espèce :</div>
+                <div class="col-md-9">{{animal['espece']}}</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-3 fw-bold">Âge :</div>
+                <div class="col-md-9">{{animal['age']}} an(s)</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-3 fw-bold">Adresse :</div>
+                <div class="col-md-9">{{animal['adresse']}} </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-3 fw-bold">Ville :</div>
+                <div class="col-md-9">{{animal['ville']}} </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-3 fw-bold">Code postal :</div>
+                <div class="col-md-9">{{animal['cp']}} </div>
+            </div>
+            <div class="col-md-12 ">
+                <hr>
+                <a href="mailto:{{ animal['courriel']}}" class="text-decoration-none btn btn-outline-primary float-right">Contacter le proprietaire : {{ animal['courriel'] }} </a>
+            </div>
+            <div>
+                <a href="/" class="text-decoration-none btn btn-outline-primary ">Page d'acceuil </a>
+            </div> 
+        </div>  
+    </div>
+</div>  
+{% endblock %}
+
+

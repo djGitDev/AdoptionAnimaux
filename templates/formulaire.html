@@ -1,0 +1,114 @@
+
+{% extends 'index_base.html' %} {% block content %}
+<div class="container mt-3">
+    <div class="card">
+        <div class="card-header">
+              <h2>Mise en adoption<h2>            
+        </div>
+        <div class="card-body">
+            <form    id="monFormulaire" action="/envoyer" method="post" >
+                <div class="row ">        
+                    <div  class="col-md-5  mr-5" >
+                        <label for="nom" class="form-label">Nom de l'animal</label>
+                        <input type="text" class="form-control is-invalid " name="nom"id="nom" minlength="3" maxlength="20" required onchange="valider_nom(this)">
+                        <div  id="erreur_nom" class="invalid-feedback" style="display: none;">Le nom de l'animal doit avoir entre 3 et 20 caractères.</div>
+                        <div id="valid_nom" class="valid-feedback" style="display: none;"> Champ valid!</div>
+                    </div>
+                    <div class="col-md-3 ml-5 ">
+                        <label for="age" class="form-label">Âge </label>
+                        <input type="number" class="form-control  is-invalid" name="age" id="age"  min="0" max="30" required onchange="valider_age(this)">
+                        <div  id="erreur_age" class="invalid-feedback" style="display: none;">L'age de l'animal n'est pas valide.</div>
+                        <div id="valid_age" class="valid-feedback" style="display: none;"> Champ valid!</div>
+                    </div>
+                </div>
+                <div class="row">        
+                    <div class="col-md-4  ">
+                        <label for="espece" class="form-label">Espece de l'animal</label>
+                        <input type="text" class="form-control is-invalid " name="espece" id="espece" minlength="3" maxlength="20" required onchange="valider_champ_pas_vide(this,document.getElementById('erreur_espece'),document.getElementById('valid_espece'))">
+                        <div  id="erreur_espece" class="invalid-feedback" style="display: none;"></div>
+                        <div id="valid_espece" class="valid-feedback" style="display: none;"> Champ valid!</div>
+                    </div>
+                </div>
+                <div class="row">        
+                    <div class="col-md-4  ">
+                        <label for="race" class="form-label">Race de l'animal</label>
+                        <input type="text" class="form-control is-invalid " name="race" id="race" minlength="3" maxlength="20" required onchange="valider_champ_pas_vide(this,document.getElementById('erreur_race'),document.getElementById('valid_race'))">
+                        <div  id="erreur_race" class="invalid-feedback" style="display: none;"></div>
+                        <div id="valid_race" class="valid-feedback" style="display: none;"> Champ valid!</div>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">        
+                    <div class="col-md-5 ">
+                        <label for="email" class="form-label">Adresse Email</label>
+                        <input type="email" class="form-control is-invalid " name="courriel" id="email" required onchange="valider_adresse_mail(this)">
+                        <div  id="erreur_email" class="invalid-feedback" style="display: none;">L'adresse e-mail n'est pas valide.</div>
+                        <div id="valid_email" class="valid-feedback" style="display: none;"> Champ valid!</div>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">        
+                    <div class="col-md-5  mr-5">
+                        <label for="adresse" class="form-label">Adresse Civique</label>
+                        <input type="text" class="form-control is-invalid " name="adresse" id="adresse" required onchange="valider_champ_pas_vide(this,document.getElementById('erreur_adresse'),document.getElementById('valid_adresse'))">
+                        <div  id="erreur_adresse" class="invalid-feedback" style="display: none;"></div>
+                        <div id="valid_adresse" class="valid-feedback" style="display: none;"> Champ valid!</div>
+                    </div>
+                    <div class="col-md-3 ml-5">
+                        <label for="codePostal" class="form-label">Code Postal </label>
+                        <input type="text" class="form-control is-invalid " name="cp" id="codePostal" pattern="[A-Za-z][0-9][A-Za-z] [0-9][A-Za-z][0-9]" required onchange="valider_code_postal(this)">
+                        <div  id="erreur_code_postal" class="invalid-feedback" style="display: none;">Le code postal n'est pas valide, exemple (1w1 9t5).</div>
+                        <div id="valid_code_postal" class="valid-feedback" style="display: none;"> Champ valid!</div>
+                    </div>
+                </div>
+                <div class="row">   
+                    <div class="col-md-4">
+                        <label for="ville" class="form-label">Ville</label>
+                        <input type="text" class="form-control is-invalid " name="ville" id="ville" required onchange="valider_champ_pas_vide(this,document.getElementById('erreur_ville'),document.getElementById('valid_ville'))">
+                        <div  id="erreur_ville" class="invalid-feedback" style="display: none;"></div>
+                        <div id="valid_ville" class="valid-feedback" style="display: none;"> Champ valid!</div>
+                    </div>     
+                   
+                </div>
+                <hr>
+                <div class="row">        
+                    <div class="col-md-5">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea name="description" id="description" cols="40" rows="3" required></textarea>
+                        <div  id="erreur_age" class="invalid-feedback" style="display: none;">L'age de l'animal n'est pas valide.</div>
+                        <div id="valid_age" class="valid-feedback" style="display: none;"> Champ valid!</div>
+                    </div>
+                </div>
+                <hr>
+                <div>
+                    <button type="submit" class="btn btn-primary">Soumettre a l'adoption</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="row offset-sm-9 my-4">
+    <div class="col-sm-6 "> 
+        <a href="/" class="btn btn-outline-danger">Annuler</a>
+    </div>
+  </div>
+<script>
+    var champs = document.querySelectorAll('input[type="text"], input[type="number"], input[type="email"]');
+
+    champs.forEach(function(champ) {
+        champ.addEventListener('input', function(event) {
+            if (event.target.value.includes(',')) {
+                event.target.value = event.target.value.replace(/,/g, ''); 
+            }
+        });
+    });
+    document.getElementById('monFormulaire').addEventListener('submit', function(event) {
+    if (!tous_champs_valides()) {
+        event.preventDefault();
+    } else {
+        this.submit(); 
+    }
+    });       
+
+</script>
+{% endblock %}

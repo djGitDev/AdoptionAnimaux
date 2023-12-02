@@ -1,0 +1,29 @@
+{% extends 'index_base.html' %} {% block content %}
+  <div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h2>Adopte-moi!<h2>
+        </div>
+        <div class="card-body row">
+        {% for animal in animaux_select %}
+        <div class="col-md-4 mb-4 ">
+            <div class="card ">
+              <div class="card-body">
+              <h5 class="card-title">{{ animal['nom'] }}</h5>
+              <p class="card-text">{{ animal['description'] }}</p>
+              <a href="/animal/{{animal['id']}}" class="btn btn-outline-primary">En savoir plus</a>
+              </div>
+            </div>
+        </div>
+        {% endfor %}
+        </div>
+    </div>
+  </div>
+  <div class="row offset-sm-3 my-4">
+    <label  class="col-sm-4">Voulez-vou mettre un animal en adoption? :</label>
+    <div class="col-sm-3 "> 
+      <a href="/formulaire" class="btn btn-success">Mise en adoption</a>
+    </div>
+  </div>
+  
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends 'index_base.html' %} {% block content %}
+  <div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h2>Resultat de la recherche<h2>
+        </div>
+        <div class="card-body row">
+        {% if animaux_select %}
+          {% for animal in animaux_select %}
+          <div class="col-md-4 mb-4">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">{{ animal['nom'] }}</h5>
+                <p class="card-text">{{ animal['description'] }}</p>
+                <a href="/animal/{{animal['id']}}"class="btn btn-outline-primary">En savoir plus</a>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+        <div class="col-md-4"></div>
+          <h3>Aucun animal trouvé.</h3>
+        </div>  
+        {% endif %}
+        </div>
+    </div>
+  </div>
+  <div class="row offset-sm-8 my-4">
+    <div class="col-sm-6 "> 
+      <a href="/" class="btn btn-primary">Page d'acceuil</a>
+    </div>
+  </div>
+{% endblock %}

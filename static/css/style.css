@@ -1,0 +1,21 @@
+#body404 {
+    font-family: Arial;
+    text-align: center;
+    margin: 50px;
+}
+#h1404 {
+    font-size: 2em;
+    margin-bottom: 10px;
+}
+#p404 {
+    font-size: 1.5em;
+    margin-bottom: 30px;
+}
+#a404 {
+    color: #007bff;
+}
+body {
+    background-image: url('/img/arriere_plan.jpg');
+    background-size: cover; 
+    background-repeat: no-repeat; 
+  }
