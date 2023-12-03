@@ -17,7 +17,7 @@ from flask import render_template
 from flask import g
 from .database import Database
 import random
-import os
+import re
 
 
 app = Flask(__name__, static_url_path="", static_folder="static")
@@ -54,22 +54,14 @@ def page_not_found(error):
 def form():
     animaux_adoptables = recuperer_animaux()
     animaux_random = random.sample(animaux_adoptables, 5)
-    return render_template('index.html', animaux_select=animaux_random)
+    return render_template('home.html', animaux_select=animaux_random)
 
-
-@app.route('/animal/<int:id_animal>')
-def details_animal(id_animal):
-    directory = 'templates/'
-    os.path.join(directory, f'{id_animal}.html')
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-    with open('templates/' + str(id_animal) + '.html', 'w') as file:
-        contenu_html = "{% extends 'animal_base.html' %}"
-        file.write(contenu_html)
-    nom_template = str(id_animal) + ".html"
+@app.route('/animal/<int:id_animal>', defaults={'created': False})
+@app.route('/animal/<int:id_animal>/<created>')
+def animal_details(id_animal, created):
     animaux_adoptables = recuperer_animaux()
     animal_concerné = animaux_adoptables[id_animal-1]
-    return render_template(nom_template, animal=animal_concerné)
+    return render_template("animal.html", animal=animal_concerné, created=created)
 
 
 def filtrer_animaux_par_attribut(animaux_adoptables, mot_recherchee, attribut):
@@ -95,7 +87,7 @@ def recherche_par_attribut(mode_recherche, animaux_adoptables, mot_recherchee):
     )
 
 
-@app.route('/search', methods=['GET'])
+@app.route('/recherche', methods=['GET'])
 def recherche():
     mode_recherche = int(request.args.get('mode_recherche'))
     mot_recherchee = str(request.args.get('mot_recherchee')).replace(' ', '')
@@ -107,16 +99,22 @@ def recherche():
         animaux_adoptables,
         mot_recherchee
     )
-    return render_template('recherche.html', animaux_select=animaux_a_lister)
+    return render_template('search.html', animaux_select=animaux_a_lister)
 
 
 @app.route('/formulaire')
 def formulaire():
-    return render_template('formulaire.html')
+    animal = empty_animal()
+    return render_template('form.html', animal=animal, errors=[])
 
 
 @app.route('/envoyer', methods=['POST'])
 def soumission():
+    errors = valider_formulaire(request.form)
+    if len(errors) > 0 :
+        animal = map_animal(request.form)
+        return render_template('form.html', animal=animal, errors=errors)
+
     db = Database()
     id_added = db.add_animal(
         request.form['nom'],
@@ -129,4 +127,93 @@ def soumission():
         request.form['ville'],
         request.form['cp']
     )
-    return redirect(url_for('details_animal', id_animal=id_added))
+    return redirect(url_for('animal_details', id_animal=id_added, created=True))
+
+
+def valider_formulaire(form):
+    errors = []
+
+    if "nom" not in form or len(form["nom"]) == 0 :
+        errors.append("Le nom de l'animal est requis.")
+    elif len(form["nom"]) < 3 or len(form["nom"]) > 20 :
+        errors.append("Le nom de l'animal doit avoir entre 3 et 20 caractères.")
+    elif "," in form["nom"] :
+        errors.append("Le nom de l'animal ne peut contenir une virgule.")
+
+    if "espece" not in form or len(form["espece"]) == 0 :
+        errors.append("L'espéce de l'animal est requise.")
+    elif "," in form["espece"] :
+        errors.append("L'espéce de l'animal ne peut contenir une virgule.")
+
+    if "race" not in form or len(form["race"]) == 0 :
+        errors.append("La race de l'animal est requise.")
+    elif "," in form["race"] :
+        errors.append("La race de l'animal ne peut contenir une virgule.")
+
+    if "age" not in form or len(form["age"]) == 0 :
+        errors.append("L'age de l'animal est requis.")
+    else:
+        try:
+            age = int(form["age"])
+            if age < 0 or age >= 30 :
+                errors.append("L'age de l'animal doit être une valeur numérique entre 0 et 30.")
+        except:
+            errors.append("L'age de l'animal doit être une valeur numérique valide.")
+
+    if "description" not in form or len(form["description"]) == 0 :
+        errors.append("La description de l'animal est requise.")
+    elif "," in form["description"] :
+        errors.append("La description de l'animal ne peut contenir une virgule.")
+
+    if "courriel" not in form or len(form["courriel"]) == 0 :
+        errors.append("Le courriel est requis.")
+    elif not re.fullmatch('^([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+$', form["courriel"]) :
+        errors.append("Le courriel est en format non valide.")
+    elif "," in form["courriel"] :
+        errors.append("Le courriel ne peut contenir une virgule.")
+
+    if "adresse" not in form or len(form["adresse"]) == 0 :
+        errors.append("L'adresse est requise.")
+    elif "," in form["adresse"] :
+        errors.append("L'adresse ne peut contenir une virgule.")
+
+    if "ville" not in form or len(form["ville"]) == 0 :
+        errors.append("La ville est requise.")
+    elif "," in form["ville"] :
+        errors.append("La ville ne peut contenir une virgule.")
+
+    if "cp" not in form or len(form["cp"]) == 0 :
+        errors.append("Le code postal est requis.")
+    elif not re.fullmatch('^[A-Za-z][0-9][A-Za-z] [0-9][A-Za-z][0-9]$', form["cp"]) :
+        errors.append("Le code postal est en format non valide.")
+    elif "," in form["cp"] :
+        errors.append("Le courriel ne peut contenir une virgule.")
+        
+    return errors
+
+def empty_animal():
+    return {
+        'nom' : '',
+        'espece' : '',
+        'race' : '',
+        'age' : '',
+        'description' : '',
+        'courriel' : '',
+        'adresse' : '',
+        'ville' : '',
+        'cp' : ''
+    }
+
+def map_animal(form):
+    animal = {
+        'nom' : form.get('nom', ''),
+        'espece' : form.get('espece', ''),
+        'race' : form.get('race', ''),
+        'age' : form.get('age', ''),
+        'description' : form.get('description', ''),
+        'courriel' : form.get('courriel', ''),
+        'adresse' : form.get('adresse', ''),
+        'ville' : form.get('ville', ''),
+        'cp' : form.get('cp', '')
+    }
+    return animal

@@ -1,4 +1,4 @@
-export FLASK_APP=index.py
+export FLASK_APP=app.py
 
 run:
 	flask run

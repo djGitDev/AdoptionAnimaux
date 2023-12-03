@@ -14,8 +14,4 @@
 #a404 {
     color: #007bff;
 }
-body {
-    background-image: url('/img/arriere_plan.jpg');
-    background-size: cover; 
-    background-repeat: no-repeat; 
-  }
+
