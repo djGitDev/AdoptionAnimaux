@@ -89,16 +89,33 @@ def recherche_par_attribut(mode_recherche, animaux_adoptables, mot_recherchee):
 
 @app.route('/recherche', methods=['GET'])
 def recherche():
-    mode_recherche = int(request.args.get('mode_recherche'))
-    mot_recherchee = str(request.args.get('mot_recherchee')).replace(' ', '')
-    mot_recherchee = mot_recherchee.lower()
-    animaux_a_lister = []
+    # mode_recherche = int(request.args.get('mode_recherche'))
+    # mot_recherchee = str(request.args.get('mot_recherchee')).replace(' ', '')
+
+    mots_recherche = str(request.args.get('mot_recherchee')).strip().split()
+
+    criteres = list(filter(lambda x: len(x) > 0, mots_recherche))
+    criteres = list(map(lambda x: x.lower(), criteres))
+
     animaux_adoptables = recuperer_animaux()
-    animaux_a_lister = recherche_par_attribut(
-        mode_recherche,
-        animaux_adoptables,
-        mot_recherchee
-    )
+    animaux_a_lister = []
+    for animal in animaux_adoptables:
+        matches = 0
+        for critere in criteres:
+            if critere in animal['nom'].lower() or critere in animal['espece'].lower() or critere in animal['race'].lower() or critere in animal['description'].lower() or critere in animal['ville'].lower():
+                matches = matches + 1
+        if matches == len(criteres):
+            animaux_a_lister.append(animal)
+
+
+    # mot_recherchee = mot_recherchee.lower()
+    # animaux_a_lister = []
+    # animaux_adoptables = recuperer_animaux()
+    # animaux_a_lister = recherche_par_attribut(
+    #     mode_recherche,
+    #     animaux_adoptables,
+    #     mot_recherchee
+    # )
     return render_template('search.html', animaux_select=animaux_a_lister)
 
 
